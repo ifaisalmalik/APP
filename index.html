@@ -44,6 +44,8 @@ input,select,textarea{font-family:inherit;font-size:15px}
 .syncdot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
 .syncdot.off{background:var(--muted)}
 .themebtn{width:30px;height:30px;flex:0 0 auto;border-radius:50%;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:14px}
+.bellbtn{position:relative;width:32px;height:32px;flex:0 0 auto;border-radius:50%;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;color:var(--gold)}
+.bellbtn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
 body.light{--bg:#f4f1e9;--panel:#ffffff;--panel2:#efeada;--line:#e4ddca;--ivory:#26221a;--muted:#8a8271;--gold:#b0841a;--grad-gold:linear-gradient(135deg,#d4af37 0%,#b8891a 45%,#8a6410 100%)}
 body.light .topbar{background:rgba(244,241,233,.9)}
 body.light .nav{background:rgba(255,255,255,.94)}
@@ -64,11 +66,11 @@ body.light .icard .ibtn.del{border-color:#e8b6ab}
 .banner{background:linear-gradient(135deg,#241d0e,#191410);border:1px solid #3a2f14;border-radius:14px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:#e7d9a8;display:flex;gap:10px}
 .banner b{color:var(--gold)}
 
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 15px;position:relative;overflow:hidden}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 13px;position:relative;overflow:hidden}
 .stat::after{content:'';position:absolute;right:-20px;top:-20px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.10),transparent 70%)}
-.stat .n{font-family:'Cormorant Garamond',serif;font-size:29px;font-weight:700;line-height:1;background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.stat .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:6px;font-weight:600}
+.stat .n{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;line-height:1;background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;font-weight:600}
 .stat.wide{grid-column:1/3}
 
 .infobtn{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 16px;display:flex;align-items:center;gap:12px;margin-bottom:20px;text-align:left}
@@ -234,14 +236,14 @@ body.light .icard .ibtn.del{border-color:#e8b6ab}
 .acard .abody{flex:1;min-width:0}
 .acard .at{font-weight:600;font-size:13px;word-break:break-word}
 .acard .as{font-size:11px;color:var(--muted);margin-top:2px}
-.quickview{background:var(--panel);border:1px solid var(--gold);border-radius:16px;padding:14px 16px;margin-bottom:16px;position:relative;overflow:hidden}
+.quickview{background:var(--panel);border:1px solid var(--gold);border-radius:14px;padding:12px 14px;margin-bottom:14px;position:relative;overflow:hidden}
 .quickview::after{content:'';position:absolute;right:-24px;top:-24px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.14),transparent 70%)}
 .quickview .qh{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:11px}
 .quickview .qrow{display:flex;gap:14px}
 .quickview .qb{flex:1;min-width:0}
 .quickview .qsplit{border-left:1px solid var(--line);padding-left:14px}
 .quickview .ql{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.quickview .qv{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;margin-top:2px;line-height:1.1}
+.quickview .qv{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;margin-top:2px;line-height:1.1}
 .quickview .qsub{font-size:12px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .reminder{background:linear-gradient(135deg,#241d0e,#1a1712);border:1px solid var(--gold);border-radius:14px;padding:12px 14px;margin-bottom:16px;font-size:13px;display:flex;gap:10px;align-items:flex-start;color:#e7d9a8}
 .reminder b{color:var(--gold)}
@@ -279,6 +281,7 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
 <div id="app" class="wrap hidden">
   <div class="topbar">
     <img id="logoBar" class="crownimg" alt="logo"><div class="brand"><div class="l1">The Lord's</div><div class="l2 serif">Farm House</div></div>
+    <button class="bellbtn" id="bellBtn" onclick="openActivity()" title="Activity"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge2 hidden" id="actBadge" style="top:-4px;right:-4px">0</span></button>
     <div class="userchip" onclick="switchUser()"><div class="nm" id="uName">—</div><div class="av" id="uAv">?</div></div>
     <button class="themebtn" id="themeBtn" onclick="toggleTheme()" title="Light / Dark">🌙</button>
     <div class="syncdot off" id="syncDot" title="sync"></div>
@@ -288,7 +291,6 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
   <div id="v-home" class="view">
     <div id="demoBanner" class="banner hidden"><div>⚙️</div><div><b>Demo mode</b> — data is only on this phone. Online sync requires Firebase setup.</div></div>
     <div id="reminderBar"></div>
-    <div class="vtitle serif">Overview <small>Dashboard</small></div>
     <div id="quickView"></div>
     <div class="stats">
       <div class="stat"><div class="n" id="stUpcoming">0</div><div class="k">Upcoming</div></div>
@@ -298,8 +300,6 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
     </div>
     <div class="tiles">
       <button class="tile" id="tileAnalytics" onclick="openAnalytics()"><span class="ic">📊</span><b>Analytics</b><small>Charts & trends</small></button>
-      <button class="tile" id="tileActivity" onclick="openActivity()"><span class="badge2 hidden" id="actBadge">0</span><span class="ic">🔔</span><b>Activity</b><small id="actSub">History</small></button>
-      <button class="tile" id="tileOwners" onclick="openOwners()"><span class="ic">👥</span><b>Owners</b><small>Partners & contacts</small></button>
       <button class="tile" id="tileInfo" onclick="openInfo()"><span class="ic">🏡</span><b>Info</b><small>Rules · contact</small></button>
       <button class="tile" id="tileIssues" onclick="openIssues()"><span class="badge2 hidden" id="issBadge">0</span><span class="ic">🛠️</span><b>Issues</b><small id="issuesSub">Reports</small></button>
       <button class="tile" id="tileBackup" onclick="openBackup()"><span class="ic">📥</span><b>Backup</b><small>Export & restore</small></button>
@@ -381,9 +381,9 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
       <button data-v="night" onclick="pickSlot('night')">Night</button>
     </div>
   </div>
-  <div class="field"><label>Customer name</label><input id="fName" placeholder="Customer name" autocomplete="off"></div>
+  <div class="field"><label>Customer name</label><input id="fName" list="custNames" oninput="onCustName()" placeholder="Customer name" autocomplete="off"><datalist id="custNames"></datalist></div>
   <div class="row2">
-    <div class="field"><label>Phone</label><input id="fPhone" placeholder="03xx..." inputmode="tel"></div>
+    <div class="field"><label>Phone</label><input id="fPhone" list="custPhones" oninput="onCustPhone()" placeholder="03xx..." inputmode="tel"><datalist id="custPhones"></datalist></div>
     <div class="field"><label>Guests</label><input id="fGuests" placeholder="e.g. 200" inputmode="numeric"></div>
   </div>
   <div class="field"><label>Event type</label>
@@ -785,10 +785,14 @@ function openForm(date,id){
       $('fEvent').value='Wedding';$('fDate').value=date||todayISO;$('fStatus').value='confirmed';$('fPay').value='—';pickSlot('full');
       $('delBtn').classList.add('hidden');
     }
-    openSheet('formSheet');
+    populateCustomers();openSheet('formSheet');
   },date||id?260:0);
 }
 window.openForm=openForm;
+function customers(){const m=new Map();bookings.forEach(b=>{if(b.name){const k=b.name.toLowerCase();if(!m.has(k)||(b.phone&&!m.get(k).phone))m.set(k,{name:b.name,phone:b.phone||''});}});return [...m.values()];}
+function populateCustomers(){const cs=customers();const nd=$('custNames'),pd=$('custPhones');if(nd)nd.innerHTML=cs.map(c=>`<option value="${esc(c.name)}">`).join('');if(pd)pd.innerHTML=cs.filter(c=>c.phone).map(c=>`<option value="${esc(c.phone)}">${esc(c.name)}</option>`).join('');}
+window.onCustName=function(){const v=$('fName').value.trim().toLowerCase();if(!v)return;const c=customers().find(x=>x.name.toLowerCase()===v);if(c&&c.phone&&!$('fPhone').value.trim())$('fPhone').value=c.phone;};
+window.onCustPhone=function(){const v=$('fPhone').value.trim();if(!v)return;const c=customers().find(x=>x.phone===v);if(c&&c.name&&!$('fName').value.trim())$('fName').value=c.name;};
 function pickSlot(v){curSlot=v;document.querySelectorAll('#fSlot button').forEach(b=>b.classList.toggle('act',b.dataset.v===v))}
 window.pickSlot=pickSlot;
 function saveBooking(){
@@ -935,7 +939,7 @@ function can(k){if(isAdmin())return true;const s=myStaff();const pm=s?(s.perms||
 function canDelete(){return can('del')}
 window.canDelete=canDelete;
 function applyPerms(){
-  const map={analytics:'tileAnalytics',owners:'tileOwners',info:'tileInfo',backup:'tileBackup',issues:'tileIssues'};
+  const map={analytics:'tileAnalytics',info:'tileInfo',backup:'tileBackup',issues:'tileIssues'};
   for(const k in map){const el=$(map[k]);if(el)el.style.display=can(k)?'':'none';}
   const en=$('nav-expenses');if(en)en.style.display=can('expenses')?'':'none';
   const at=$('tileAdmin');if(at)at.style.display=isAdmin()?'':'none';
@@ -954,7 +958,7 @@ function saveAdmin(){
   try{store.saveConfig(c);cfg=c;applyPerms();toast('Admin settings saved')}catch(e){toast('Save failed',true)}
 }
 window.saveAdmin=saveAdmin;
-const PERMS=[['analytics','Analytics'],['owners','Owners'],['info','Info'],['backup','Backup'],['issues','Issues'],['expenses','Expenses'],['del','Delete']];
+const PERMS=[['analytics','Analytics'],['info','Info'],['backup','Backup'],['issues','Issues'],['expenses','Expenses'],['del','Delete']];
 function renderStaffList(){
   const list=cfg.staff||[];
   $('staffList2').innerHTML=list.length?list.map((s,i)=>{
@@ -1005,11 +1009,11 @@ function renderQuickView(){
   const mine=bookings.filter(b=>active(b)&&(b.bookedBy||'')===currentUser&&endOf(b)>=todayISO).sort((a,b)=>a.date<b.date?-1:1);
   const next=mine[0];
   const bal=mine.reduce((s,b)=>s+Math.max(0,(+b.total||0)-(+b.advance||0)),0);
-  el.innerHTML=`<div class="qh">Quick View \u00b7 ${esc(currentUser)}</div>
+  el.innerHTML=`<div class="quickview"><div class="qh">Quick View \u00b7 ${esc(currentUser)}</div>
     <div class="qrow">
       <div class="qb"><div class="ql">My next booking</div><div class="qv" style="color:var(--gold)">${next?fmtDate(next.date):'\u2014'}</div><div class="qsub">${next?esc(next.name)+' \u00b7 '+slotLabel(next.slot):'None upcoming'}</div></div>
       <div class="qb qsplit"><div class="ql">My pending balance</div><div class="qv" style="color:var(--gold)">${money(bal)}</div><div class="qsub" style="color:var(--muted)">${mine.length} upcoming booking${mine.length!==1?'s':''}</div></div>
-    </div>`;
+    </div></div>`;
 }
 window.renderQuickView=renderQuickView;
 function renderReminder(){

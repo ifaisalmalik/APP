@@ -11,7 +11,7 @@
 <!-- app icons injected at runtime from the logo -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0a0a0e; --panel:#14141c; --panel2:#1b1b25; --line:#2a2a36;
@@ -124,6 +124,12 @@ body.light .icard .ibtn.del{border-color:#e8b6ab}
 .callegend{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:center;margin-top:16px;font-size:11px;color:var(--muted)}
 .callegend span{display:flex;align-items:center;gap:5px}
 .callegend i{width:8px;height:8px;border-radius:50%}
+.calsummary{display:flex;gap:10px;margin-bottom:14px}
+.cbox{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 14px}
+.cbox .cn{font-size:22px;font-weight:700;color:var(--gold);line-height:1}
+.cbox.green .cn{color:var(--green)}
+.cbox .ck{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;font-weight:600}
+.cbn{font-size:8px;font-weight:700;line-height:1.1;margin-top:2px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
 .odot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
 .permrow{display:flex;align-items:center;justify-content:space-between;padding:12px 2px;border-bottom:1px solid var(--line);font-size:14px}
 .permrow:last-child{border:none}
@@ -141,7 +147,7 @@ body.light .icard .ibtn.del{border-color:#e8b6ab}
 .pchip{font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;border:1px solid var(--line)}
 .pchip.on{color:#141018;background:var(--grad-gold);border-color:transparent}
 .pchip.off{color:var(--muted);background:transparent;text-decoration:line-through}
-.stat .n,.quickview .qv,.datechip .d,.money,.ecard .amt{font-family:'Space Grotesk',sans-serif;letter-spacing:-.5px;font-feature-settings:'tnum'}
+.stat .n,.quickview .qv,.datechip .d,.money,.ecard .amt{font-family:'Inter',sans-serif !important;font-weight:700;letter-spacing:-.2px;font-feature-settings:'tnum'}
 
 .search{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:11px 14px;color:var(--ivory);margin-bottom:12px}
 .search::placeholder{color:var(--muted)}
@@ -150,7 +156,7 @@ body.light .icard .ibtn.del{border-color:#e8b6ab}
 .filters button.act{color:#141018;background:var(--grad-gold);border-color:transparent}
 .statusfilter{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:var(--ivory);margin-bottom:14px}
 
-.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom));z-index:45;background:var(--grad-gold);color:#141018;font-weight:700;font-size:14px;padding:13px 22px;border-radius:30px;box-shadow:0 8px 24px rgba(212,175,55,.35);display:flex;align-items:center;gap:7px}
+.fab{position:fixed;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:45;background:var(--grad-gold);color:#141018;font-weight:700;font-size:14px;padding:13px 22px;border-radius:30px;box-shadow:0 8px 24px rgba(212,175,55,.35);display:flex;align-items:center;gap:7px}
 .fab span{font-size:18px;font-weight:700;margin-top:-1px}
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(14,14,20,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
 .nav .wrapn{max-width:480px;margin:0 auto;width:100%;display:flex}
@@ -309,9 +315,9 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
 
   <!-- CALENDAR -->
   <div id="v-cal" class="view hidden">
+    <div class="calsummary" id="calSummary"></div>
     <div class="calbar"><button class="calnav" onclick="calMove(-1)">‹</button><h3 class="serif" id="calTitle" onclick="calToday()">—</h3><button class="calnav" onclick="calMove(1)">›</button></div>
-    <div style="text-align:center;margin:-6px 0 12px"><button onclick="calToday()" style="font-size:12px;color:var(--gold);font-weight:600;padding:4px 12px;border:1px solid var(--line);border-radius:20px;background:var(--panel)">Go to today</button></div>
-    <div class="dow"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+    <div class="dow"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
     <div class="grid" id="calGrid"></div>
     <div class="callegend" id="calLegend"></div>
   </div>
@@ -531,7 +537,7 @@ const MONF=['January','February','March','April','May','June','July','August','S
 const todayISO=iso(new Date());
 const CAT_ICON={Electricity:'⚡',Maintenance:'🔧','Staff Salary':'💵',Salary:'💵',Gardening:'🌿',Fuel:'⛽',Utilities:'💡',Repairs:'🛠️',Supplies:'📦',Food:'🍽️',Other:'📝'};
 const STATUS={confirmed:{l:'Confirmed',c:'var(--green)'},pending:{l:'Pending',c:'var(--blue)'},tentative:{l:'Tentative',c:'#d3a24a'},cancelled:{l:'Cancelled',c:'var(--red)'}};
-function fmtDate(s){const[y,m,d]=s.split('-');return d+' '+MON[+m-1]+' '+y}
+function fmtDate(s){const[y,m,d]=s.split('-');return d+'/'+m+'/'+y}
 function slotLabel(s){return s==='full'?'Full day':s==='day'?'Day':'Night'}
 function slotBadge(s){return `<span class="badge b-${s}">${slotLabel(s)}</span>`}
 function toast(msg,err){const t=$('toast');t.innerHTML=msg;t.className='toast show'+(err?' err':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3400)}
@@ -651,18 +657,21 @@ function renderCal(){
   const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
   const byDate={};
   bookings.filter(active).forEach(b=>eachDate(b.date,endOf(b),ds=>{(byDate[ds]=byDate[ds]||[]).push(b)}));
-  let html='';
+  let html='',bookedDays=0;
   for(let i=0;i<first;i++)html+='<div class="cell blank"></div>';
   for(let d=1;d<=days;d++){
     const ds=y+'-'+pad(m+1)+'-'+pad(d);const list=byDate[ds]||[];
-    const isPast=ds<todayISO,isToday=ds===todayISO,hasFull=list.some(x=>x.slot==='full');
-    let cls='cell';if(isToday)cls+=' today';if(isPast&&!list.length)cls+=' past';if(list.length)cls+=hasFull?' full':' booked';
-    let dots='';if(list.length)dots='<div class="dots">'+list.slice(0,4).map(x=>`<i style="background:${ownerColor(x.bookedBy)}"></i>`).join('')+'</div>';
-    html+=`<div class="${cls}" onclick="dayTap('${ds}')"><div class="num">${d}</div>${dots}</div>`;
+    const isPast=ds<todayISO,isToday=ds===todayISO;
+    let cls='cell',style='',name='';
+    if(isToday)cls+=' today';
+    if(isPast&&!list.length)cls+=' past';
+    if(list.length){bookedDays++;const b0=list[0];const col=ownerColor(b0.bookedBy);const fn=(b0.bookedBy||'').split(' ')[0];style=`background:${col}22;border-color:${col}`;name=`<div class="cbn" style="color:${col}">${esc(fn)}${list.length>1?' +'+(list.length-1):''}</div>`;}
+    html+=`<div class="${cls}" style="${style}" onclick="dayTap('${ds}')"><div class="num">${d}</div>${name}</div>`;
   }
   $('calGrid').innerHTML=html;
+  const cs=$('calSummary');if(cs)cs.innerHTML=`<div class="cbox"><div class="cn">${bookedDays}</div><div class="ck">Monthly bookings</div></div><div class="cbox green"><div class="cn">${days-bookedDays}</div><div class="ck">Available slots</div></div>`;
   const _ow=ownerList().filter(n=>bookings.some(b=>b.bookedBy===n));
-  const _lg=$('calLegend');if(_lg)_lg.innerHTML=_ow.length?_ow.map(n=>`<span><i style="background:${ownerColor(n)}"></i>${esc(n)}</span>`).join(''):'<span style="color:var(--muted)">Each manager gets a colour</span>';
+  const _lg=$('calLegend');if(_lg)_lg.innerHTML=(_ow.length?_ow.map(n=>`<span><i style="background:${ownerColor(n)}"></i>${esc(n)}</span>`).join(''):'<span style="color:var(--muted)">Each manager gets a colour</span>');
 }
 window.dayTap=function(ds){
   const list=bookings.filter(b=>active(b)&&ds>=b.date&&ds<=endOf(b));
@@ -803,7 +812,7 @@ function saveBooking(){
   if(!name){toast('Enter customer name',true);return}
   const status=$('fStatus').value;
   if(status!=='cancelled'){
-    const clash=bookings.find(b=>b.id!==editingId&&active(b)&&overlaps(date,end,b.date,endOf(b))&&slotClash(b.slot,curSlot));
+    const clash=bookings.find(b=>b.id!==editingId&&active(b)&&overlaps(date,end,b.date,endOf(b)));
     if(clash){toast(`❌ Already booked — <b>${esc(clash.name)}</b> (${slotLabel(clash.slot)}) · by ${esc(clash.bookedBy)}`,true);return}
   }
   const data={date,endDate:end,slot:curSlot,name,phone:$('fPhone').value.trim(),event:$('fEvent').value,guests:$('fGuests').value.trim(),total:+($('fTotal').value||0),advance:+($('fAdvance').value||0),status,notes:$('fNotes').value.trim(),pay:$('fPay').value};

@@ -107,10 +107,10 @@ body.light .icard .ibtn.del{border-color:#e8b6ab}
 .calbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .calbar h3{font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:22px;font-weight:700;margin:0}
 .calnav{width:38px;height:38px;border-radius:11px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:18px;color:var(--gold)}
-.dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:6px}
+.dow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-bottom:6px}
 .dow span{text-align:center;font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.cell{aspect-ratio:1;border-radius:11px;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding-top:2px}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.cell{aspect-ratio:1;min-width:0;border-radius:11px;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding-top:2px;overflow:hidden}
 .cell.blank{background:transparent;border:none}
 .cell .num{font-size:14px;font-weight:600}
 .cell.today{border-color:var(--gold)}

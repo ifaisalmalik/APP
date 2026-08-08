@@ -92,7 +92,7 @@ body.light .icard .ibtn.del{border-color:#e8b6ab}
 .datechip .d{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;line-height:1;color:var(--gold)}
 .datechip .m{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
 .bcard .body{flex:1;min-width:0}
-.bcard .nm{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:70px}
+.bcard .nm{font-weight:600;font-size:15px;line-height:1.25;word-break:break-word;overflow-wrap:anywhere}
 .bcard .meta{font-size:12px;color:var(--muted);margin-top:3px;display:flex;flex-wrap:wrap;gap:4px 10px}
 .bcard .by{font-size:11px;color:var(--gold);margin-top:5px}
 .badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:20px;border:1px solid}
@@ -195,6 +195,15 @@ body.light .icard .ibtn.del{border-color:#e8b6ab}
 .payrow .pm{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-left:4px}
 .payrow .pmeta{font-size:11px;color:var(--muted);text-align:right}
 .paidfull{color:var(--green);font-weight:700;font-size:13px;text-align:center;padding:8px;border:1px solid var(--line);border-radius:10px;margin-top:6px}
+.stmtgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.scell{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 11px}
+.scell .sv{font-weight:700;font-size:14px}
+.scell .sk{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.stmtperiod{font-size:12px;color:var(--gold);font-weight:600;text-align:center;margin-top:4px}
+.stmtrow{display:flex;gap:8px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}
+.stmtrow .sd{color:var(--muted);flex:0 0 auto;width:74px}
+.stmtrow .snm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stmtrow .sm{flex:0 0 auto;font-weight:600;text-align:right}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .segs{display:flex;gap:8px}
 .segs button{flex:1;padding:11px 0;border-radius:12px;background:var(--panel2);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
@@ -327,6 +336,7 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
       <button class="tile" id="tileInfo" onclick="openInfo()"><span class="ic">🏡</span><b>Info</b><small>Rules · contact</small></button>
       <button class="tile" id="tileIssues" onclick="openIssues()"><span class="badge2 hidden" id="issBadge">0</span><span class="ic">🛠️</span><b>Issues</b><small id="issuesSub">Reports</small></button>
       <button class="tile" id="tileBackup" onclick="openBackup()"><span class="ic">📥</span><b>Backup</b><small>Export & restore</small></button>
+      <button class="tile" id="tileStatement" onclick="openStatement()"><span class="ic">📄</span><b>Statement</b><small>Reports & PDF</small></button>
       <button class="tile" id="tileAdmin" style="display:none" onclick="openAdmin()"><span class="ic">🔐</span><b>Admin</b><small>Access & codes</small></button>
     </div>
   </div>
@@ -528,6 +538,19 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
   <button class="btn" onclick="savePayment()">Record payment</button>
 </div>
 
+<div class="sheet" id="stmtSheet">
+  <div class="grab"></div>
+  <h2 class="serif">Statement</h2>
+  <div class="sub">Business report — pick a period</div>
+  <div class="segs" id="stmtSegs" style="margin-top:6px"><button onclick="setStmt('day')">Daily</button><button onclick="setStmt('week')">Weekly</button><button onclick="setStmt('month')">Monthly</button><button onclick="setStmt('custom')">Custom</button></div>
+  <div id="stmtCustom" class="row2 hidden" style="margin-top:10px">
+    <div class="field"><label>From</label><div class="datepick"><span class="dispdate empty" id="stmtFromDisp">dd/mm/yyyy</span><input type="date" id="stmtFrom" onchange="syncDateDisp('stmtFrom','stmtFromDisp');renderStatement()" onclick="this.showPicker&&this.showPicker()"></div></div>
+    <div class="field"><label>To</label><div class="datepick"><span class="dispdate empty" id="stmtToDisp">dd/mm/yyyy</span><input type="date" id="stmtTo" onchange="syncDateDisp('stmtTo','stmtToDisp');renderStatement()" onclick="this.showPicker&&this.showPicker()"></div></div>
+  </div>
+  <div id="stmtBody"></div>
+  <button class="btn" onclick="statementPDF()" style="margin-top:14px">🧾 Download PDF</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -552,6 +575,7 @@ let currentUser=localStorage.getItem('lfh_user')||'';
 let currentRole=localStorage.getItem('lfh_role')||'';
 let cfg={adminName:'Admin',adminCode:'Admin',perms:{},staff:[]};
 let currentCode=localStorage.getItem('lfh_code')||'';
+let calSwipe=false;
 let store=null, editingId=null, editingExp=null, initialLoaded=false, knownIds=new Set();
 let curSlot='full', curFilter='upcoming', currentView='home';
 let calDate=new Date();
@@ -707,7 +731,7 @@ function renderCal(){
   const _ow=ownerList().filter(n=>bookings.some(b=>b.bookedBy===n));
   const _lg=$('calLegend');if(_lg)_lg.innerHTML=(_ow.length?_ow.map(n=>`<span><i style="background:${ownerColor(n)}"></i>${esc(n)}</span>`).join(''):'<span style="color:var(--muted)">Each manager gets a colour</span>');
 }
-window.dayTap=function(ds){
+window.dayTap=function(ds){if(calSwipe){calSwipe=false;return;}
   const list=bookings.filter(b=>active(b)&&ds>=b.date&&ds<=endOf(b));
   if(!list.length){openForm(ds);return}
   $('detailBody').innerHTML=`<div class="grab"></div><h2 class="serif" style="font-family:'Inter',sans-serif;font-weight:700">${fmtDate(ds)}</h2><div class="sub">${list.length} booking${list.length>1?'s':''} this day</div>${list.map(cardHTML).join('')}<button class="btn ghost" onclick="openForm('${ds}')" style="margin-top:6px">＋ Book this date</button>`;
@@ -989,6 +1013,43 @@ window.fabAction=fabAction;
 function applyTheme(t){document.body.classList.toggle('light',t==='light');const b=$('themeBtn');if(b)b.textContent=t==='light'?'☀️':'🌙';try{localStorage.setItem('lfh_theme',t)}catch(e){}}
 function toggleTheme(){applyTheme(document.body.classList.contains('light')?'dark':'light')}
 window.toggleTheme=toggleTheme;
+let stmtPeriod='month';
+window.openStatement=function(){setStmt('month');openSheet('stmtSheet');};
+window.setStmt=function(pd){stmtPeriod=pd;const order=['day','week','month','custom'];document.querySelectorAll('#stmtSegs button').forEach((b,i)=>b.classList.toggle('act',order[i]===pd));const c=$('stmtCustom');if(c)c.classList.toggle('hidden',pd!=='custom');renderStatement();};
+function stmtRange(){const t=new Date();if(stmtPeriod==='day')return[todayISO,todayISO];if(stmtPeriod==='week'){const s=new Date(t);s.setDate(t.getDate()-6);return[iso(s),todayISO];}if(stmtPeriod==='month')return[iso(new Date(t.getFullYear(),t.getMonth(),1)),iso(new Date(t.getFullYear(),t.getMonth()+1,0))];return[($('stmtFrom')&&$('stmtFrom').value)||todayISO,($('stmtTo')&&$('stmtTo').value)||todayISO];}
+function stmtData(){let r=stmtRange(),a=r[0],b=r[1];if(a>b){const x=a;a=b;b=x;}
+  const bk=bookings.filter(x=>active(x)&&x.date>=a&&x.date<=b).sort((p,q)=>p.date<q.date?-1:1);
+  let collected=0;bookings.forEach(x=>{if(+x.advance>0&&x.date>=a&&x.date<=b)collected+=+x.advance;(x.payments||[]).forEach(pp=>{if(pp.date>=a&&pp.date<=b)collected+=+pp.amount||0;});});
+  const exp=expenses.filter(e=>e.date>=a&&e.date<=b).sort((p,q)=>p.date<q.date?-1:1);
+  const expTotal=exp.reduce((s,e)=>s+(+e.amount||0),0);
+  const bookedValue=bk.reduce((s,x)=>s+(+x.total||0),0);
+  const pending=bk.reduce((s,x)=>s+balanceOf(x),0);
+  return{a:a,b:b,bk:bk,collected:collected,exp:exp,expTotal:expTotal,bookedValue:bookedValue,pending:pending,net:collected-expTotal};}
+function renderStatement(){const d=stmtData();
+  const sum=`<div class="stmtgrid"><div class="scell"><div class="sv">${d.bk.length}</div><div class="sk">Bookings</div></div><div class="scell"><div class="sv">${money(d.bookedValue)}</div><div class="sk">Booked value</div></div><div class="scell"><div class="sv" style="color:var(--green)">${money(d.collected)}</div><div class="sk">Collected</div></div><div class="scell"><div class="sv" style="color:var(--red)">${money(d.expTotal)}</div><div class="sk">Expenses</div></div><div class="scell"><div class="sv" style="color:var(--gold)">${money(d.net)}</div><div class="sk">Net</div></div><div class="scell"><div class="sv">${money(d.pending)}</div><div class="sk">Pending</div></div></div>`;
+  const bkRows=d.bk.length?d.bk.map(x=>`<div class="stmtrow"><span class="sd">${fmtDate(x.date)}</span><span class="snm">${esc(x.name)}</span><span class="sm">${money(x.total)} · <span style="color:var(--gold)">${money(balanceOf(x))} due</span></span></div>`).join(''):'<div class="pmeta" style="padding:8px 0">No bookings in this period.</div>';
+  const expRows=d.exp.map(e=>`<div class="stmtrow"><span class="sd">${fmtDate(e.date)}</span><span class="snm">${esc(e.category||'Expense')}${e.note?' · '+esc(e.note):''}</span><span class="sm" style="color:var(--red)">${money(e.amount)}</span></div>`).join('');
+  $('stmtBody').innerHTML=`<div class="stmtperiod">${fmtDate(d.a)} → ${fmtDate(d.b)}</div>${sum}<div class="paysec-h" style="margin-top:16px">Bookings</div>${bkRows}${d.exp.length?`<div class="paysec-h" style="margin-top:16px">Expenses</div>${expRows}`:''}`;}
+window.renderStatement=renderStatement;
+window.statementPDF=async function(){const d=stmtData();toast('Generating statement...');
+  let mod;try{mod=await import("https://cdn.jsdelivr.net/npm/jspdf@2.5.2/+esm")}catch(e){toast('Needs internet',true);return}
+  const JS=mod.jsPDF||mod.default;const doc=new JS({unit:'pt',format:'a4'});
+  const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),cx=W/2;
+  const gold=[212,175,55],line=[225,221,206];
+  try{doc.addImage(LOGO,'JPEG',cx-40,24,80,80)}catch(e){}
+  doc.setTextColor(120,116,105);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('BUSINESS STATEMENT',cx,116,{align:'center'});
+  doc.setFontSize(11);doc.setTextColor(40,40,40);doc.text(fmtDate(d.a)+'   to   '+fmtDate(d.b),cx,133,{align:'center'});
+  doc.setDrawColor(gold[0],gold[1],gold[2]);doc.setLineWidth(1);doc.line(50,145,W-50,145);
+  let y=170;const rows=[['Bookings',String(d.bk.length)],['Booked value',money(d.bookedValue)],['Collected',money(d.collected)],['Expenses',money(d.expTotal)],['Net',money(d.net)],['Pending balance',money(d.pending)]];
+  doc.setFontSize(11);rows.forEach(r=>{doc.setTextColor(90,90,90);doc.setFont('helvetica','normal');doc.text(r[0],55,y);doc.setTextColor(20,20,20);doc.setFont('helvetica','bold');doc.text(r[1],W-55,y,{align:'right'});y+=20;});
+  y+=6;doc.setDrawColor(line[0],line[1],line[2]);doc.line(50,y,W-50,y);y+=22;
+  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(gold[0],gold[1],gold[2]);doc.text('BOOKINGS',55,y);y+=16;doc.setFontSize(9);
+  d.bk.forEach(x=>{if(y>H-60){doc.addPage();y=50;}doc.setTextColor(90,90,90);doc.setFont('helvetica','normal');doc.text(fmtDate(x.date),55,y);doc.setTextColor(20,20,20);doc.text(String(x.name||'').substring(0,26),150,y);doc.text(money(x.total),W-165,y,{align:'right'});doc.setTextColor(gold[0],gold[1],gold[2]);doc.text(money(balanceOf(x))+' due',W-55,y,{align:'right'});y+=15;});
+  if(d.exp.length){y+=12;if(y>H-60){doc.addPage();y=50;}doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(gold[0],gold[1],gold[2]);doc.text('EXPENSES',55,y);y+=16;doc.setFontSize(9);
+    d.exp.forEach(e=>{if(y>H-50){doc.addPage();y=50;}doc.setTextColor(90,90,90);doc.setFont('helvetica','normal');doc.text(fmtDate(e.date),55,y);doc.setTextColor(20,20,20);doc.text(String(e.category||'Expense').substring(0,30),150,y);doc.setTextColor(200,60,60);doc.text(money(e.amount),W-55,y,{align:'right'});y+=15;});}
+  const fname='statement-'+d.a+'-to-'+d.b+'.pdf';const blob=doc.output('blob');
+  try{const file=new File([blob],fname,{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Statement'});toast('Statement shared ✓');return;}}catch(e){}
+  doc.save(fname);toast('PDF downloaded');};
 function isAdmin(){return currentRole==='admin'}
 function myStaff(){return (cfg.staff||[]).find(s=>s.code===currentCode)}
 function can(k){if(isAdmin())return true;const s=myStaff();const pm=s?(s.perms||{}):{};return !(pm[k]===false)}
@@ -999,6 +1060,7 @@ function applyPerms(){
   for(const k in map){const el=$(map[k]);if(el)el.style.display=can(k)?'':'none';}
   const en=$('nav-expenses');if(en)en.style.display=can('expenses')?'':'none';
   const at=$('tileAdmin');if(at)at.style.display=isAdmin()?'':'none';
+  const ts=$('tileStatement');if(ts)ts.style.display=can('analytics')?'':'none';
   try{renderIssues();renderOwners();}catch(e){}
 }
 window.applyPerms=applyPerms;
@@ -1141,6 +1203,13 @@ try{
   var _mb=new Blob([JSON.stringify(_mani)],{type:'application/manifest+json'});
   var _ml=document.createElement('link');_ml.rel='manifest';_ml.href=URL.createObjectURL(_mb);document.head.appendChild(_ml);
 }catch(e){}
+(function(){
+  const cal=document.getElementById('v-cal');if(!cal)return;
+  let sx=0,sy=0;
+  cal.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;calSwipe=false;},{passive:true});
+  cal.addEventListener('touchmove',e=>{const t=e.changedTouches[0];if(Math.abs(t.clientX-sx)>14&&Math.abs(t.clientX-sx)>Math.abs(t.clientY-sy))calSwipe=true;},{passive:true});
+  cal.addEventListener('touchend',e=>{const t=e.changedTouches[0];const dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)){calMove(dx<0?1:-1);calSwipe=true;setTimeout(()=>{calSwipe=false;},350);}},{passive:true});
+})();
 initStore();
 if(currentUser&&currentRole)enterApp();
 </script>

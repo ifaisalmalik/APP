@@ -24,7 +24,7 @@
 html,body{margin:0;padding:0}
 body{background:var(--bg);color:var(--ivory);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
 .wrap{max-width:480px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
-.serif{font-family:'Cormorant Garamond',serif}
+.serif{font-family:'Cormorant Garamond',serif;font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,select,textarea{font-family:inherit;font-size:15px}
 .hidden{display:none !important}
@@ -177,6 +177,24 @@ body.light .icard .ibtn.del{border-color:#e8b6ab}
 .field input,.field select,.field textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--ivory)}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold)}
 .field textarea{resize:none;min-height:64px}
+.datepick{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;overflow:hidden}
+.datepick:focus-within{border-color:var(--gold)}
+.datepick input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:none;background:none;margin:0;padding:0;cursor:pointer}
+.datepick .dispdate{color:var(--ivory);font-size:15px}
+.datepick .dispdate.empty{color:var(--muted)}
+.bright{display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex:0 0 auto}
+.bright .st{position:static;max-width:none;top:auto;right:auto}
+.bact{display:flex;gap:6px}
+.bactbtn{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);font-size:13px;display:grid;place-items:center;cursor:pointer;line-height:1}
+.bactbtn.del{border-color:#4a2620}
+.paysec{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.paysec-h{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px}
+.payrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.payrow:last-of-type{border-bottom:none}
+.payrow .pa{font-weight:700;color:var(--gold);font-size:14px}
+.payrow .pm{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-left:4px}
+.payrow .pmeta{font-size:11px;color:var(--muted);text-align:right}
+.paidfull{color:var(--green);font-weight:700;font-size:13px;text-align:center;padding:8px;border:1px solid var(--line);border-radius:10px;margin-top:6px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .segs{display:flex;gap:8px}
 .segs button{flex:1;padding:11px 0;border-radius:12px;background:var(--panel2);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
@@ -377,8 +395,8 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
   <h2 class="serif" id="formTitle">New booking</h2>
   <div class="sub">Booking details</div>
   <div class="row2">
-    <div class="field"><label>From date</label><input type="date" id="fDate"></div>
-    <div class="field"><label>To date (optional)</label><input type="date" id="fEndDate"></div>
+    <div class="field"><label>From date</label><div class="datepick"><span class="dispdate empty" id="fDateDisp">dd/mm/yyyy</span><input type="date" id="fDate" onchange="syncDateDisp('fDate','fDateDisp')" onclick="this.showPicker&&this.showPicker()"></div></div>
+    <div class="field"><label>To date (optional)</label><div class="datepick"><span class="dispdate empty" id="fEndDateDisp">dd/mm/yyyy</span><input type="date" id="fEndDate" onchange="syncDateDisp('fEndDate','fEndDateDisp')" onclick="this.showPicker&&this.showPicker()"></div></div>
   </div>
   <div class="field"><label>Time slot</label>
     <div class="segs" id="fSlot">
@@ -393,7 +411,7 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
     <div class="field"><label>Guests</label><input id="fGuests" placeholder="e.g. 200" inputmode="numeric"></div>
   </div>
   <div class="field"><label>Event type</label>
-    <select id="fEvent"><option>Wedding</option><option>Mehndi</option><option>Barat</option><option>Walima</option><option>Birthday</option><option>Corporate</option><option>Get-together</option><option>Personal Stay</option><option>Maintenance/Cleaning</option><option>Guests/Friends</option><option>Other</option></select>
+    <select id="fEvent"><option>Family Picnic</option><option>Birthday Event</option><option>Corporate Get-Together</option><option>Friends Gathering</option><option>Wedding/Party</option></select>
   </div>
   <div class="row2">
     <div class="field"><label>Total amount (Rs)</label><input id="fTotal" placeholder="0" inputmode="numeric"></div>
@@ -419,7 +437,7 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
   <h2 class="serif" id="expTitle">Add expense</h2>
   <div class="sub">Log a farmhouse expense</div>
   <div class="row2">
-    <div class="field"><label>Date</label><input type="date" id="eDate"></div>
+    <div class="field"><label>Date</label><div class="datepick"><span class="dispdate empty" id="eDateDisp">dd/mm/yyyy</span><input type="date" id="eDate" onchange="syncDateDisp('eDate','eDateDisp')" onclick="this.showPicker&&this.showPicker()"></div></div>
     <div class="field"><label>Amount (Rs)</label><input id="eAmount" placeholder="0" inputmode="numeric"></div>
   </div>
   <div class="field"><label>Category</label>
@@ -500,6 +518,16 @@ body.light .reminder{background:linear-gradient(135deg,#fbf4dd,#f6efd9);color:#7
   <div class="sub" style="margin-top:18px">Keep your Admin code somewhere safe. If forgotten, change it in Firebase Console → Firestore → meta/config.</div>
 </div>
 
+<div class="sheet" id="paySheet">
+  <div class="grab"></div>
+  <h2 class="serif">Add payment</h2>
+  <div class="sub"><span id="payFor">—</span> · Balance <b style="color:var(--gold)" id="payBal">Rs 0</b></div>
+  <div class="row2"><div class="field"><label>Amount (Rs)</label><input id="payAmount" type="number" inputmode="numeric" placeholder="0"></div><div class="field"><label>Method</label><select id="payMethod"><option>Cash</option><option>Bank Transfer</option><option>EasyPaisa</option><option>JazzCash</option><option>Other</option></select></div></div>
+  <button class="btn ghost" onclick="payFull()" style="margin-top:2px">Pay full balance</button>
+  <div class="field"><label>Note (optional)</label><input id="payNote" placeholder="e.g. final payment"></div>
+  <button class="btn" onclick="savePayment()">Record payment</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -549,6 +577,8 @@ function esc(s){return String(s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;
 function endOf(b){return b.endDate&&b.endDate>=b.date?b.endDate:b.date}
 function overlaps(s1,e1,s2,e2){return s1<=e2&&s2<=e1}
 function active(b){return b.status!=='cancelled'}
+function paidOf(b){return (+b.advance||0)+((b.payments||[]).reduce((s,p)=>s+(+p.amount||0),0))}
+function balanceOf(b){return Math.max(0,(+b.total||0)-paidOf(b))}
 const OWNER_COLORS=['#d4af37','#6fa8c7','#b89adf','#7ba05b','#e0866b','#5fc9c3','#e6a3c9','#e0b64a','#8aa2e0','#c98f5f'];
 function ownerList(){const set=new Set();(farmInfo.owners||[]).forEach(o=>o&&o.name&&set.add(o.name));(cfg.staff||[]).forEach(st=>st&&st.name&&set.add(st.name));bookings.forEach(b=>b.bookedBy&&set.add(b.bookedBy));STAFF.forEach(n=>set.add(n));return [...set].sort()}
 function ownerColor(name){if(!name)return '#8f897b';const l=ownerList();const i=l.indexOf(name);return i>=0?OWNER_COLORS[i%OWNER_COLORS.length]:'#8f897b'}
@@ -627,14 +657,14 @@ function renderHome(){
   const up=bookings.filter(b=>active(b)&&endOf(b)>=todayISO);
   const ym=todayISO.slice(0,7);
   const tm=bookings.filter(b=>active(b)&&b.date.startsWith(ym));
-  const bal=bookings.filter(b=>active(b)&&endOf(b)>=todayISO).reduce((s,b)=>s+Math.max(0,(+b.total||0)-(+b.advance||0)),0);
+  const bal=bookings.filter(b=>active(b)&&endOf(b)>=todayISO).reduce((s,b)=>s+balanceOf(b),0);
   const exM=expenses.filter(e=>(e.date||'').startsWith(ym)).reduce((s,e)=>s+(+e.amount||0),0);
   $('stUpcoming').textContent=up.length;$('stMonth').textContent=tm.length;
   $('stBalance').textContent=money(bal);$('stExpense').textContent=money(exM);updateActivityBadge();renderQuickView();renderReminder();
   const _rl=$('recentList');if(_rl){const recent=[...bookings].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,5);_rl.innerHTML=recent.length?recent.map(cardHTML).join(''):'';}
 }
 function cardHTML(b){
-  const[y,m,d]=b.date.split('-');const bal=Math.max(0,(+b.total||0)-(+b.advance||0));
+  const[y,m,d]=b.date.split('-');const bal=balanceOf(b);
   const st=STATUS[b.status]||STATUS.confirmed;
   return `<div class="bcard ${b.status==='cancelled'?'cancelled':''}" onclick="showDetail('${b.id}')">
     <div class="datechip"><div class="d">${+d}</div><div class="m">${MON[+m-1]}</div></div>
@@ -643,7 +673,10 @@ function cardHTML(b){
       <div class="meta">${slotBadge(b.slot)}<span>${esc(b.event||'')}</span>${b.guests?`<span>· ${esc(b.guests)} guests</span>`:''}${rangeText(b)}</div>
       <div class="by"><i class="odot" style="background:${ownerColor(b.bookedBy)}"></i>Booked by ${esc(b.bookedBy||'—')}${bal>0&&b.status!=='cancelled'?` · <span style="color:var(--muted)">Balance ${money(bal)}</span>`:''}</div>
     </div>
-    <div class="st" style="color:${st.c}">${st.l}</div>
+    <div class="bright">
+      <div class="st" style="color:${st.c}">${st.l}</div>
+      <div class="bact"><button class="bactbtn" onclick="event.stopPropagation();openForm(null,'${b.id}')" title="Edit">✏️</button>${canDelete()?`<button class="bactbtn del" onclick="event.stopPropagation();delBooking('${b.id}')" title="Delete">🗑️</button>`:''}</div>
+    </div>
   </div>`;
 }
 
@@ -651,6 +684,7 @@ function cardHTML(b){
 function calMove(n){calDate.setMonth(calDate.getMonth()+n);renderCal()}
 function calToday(){calDate=new Date();renderCal()}
 window.calToday=calToday;
+window.delBooking=function(id){if(!canDelete()){toast('Only admin can delete',true);return}if(!confirm('Delete this booking?'))return;try{store.removeBooking(id);toast('Booking deleted')}catch(e){toast('Delete fail',true)}};
 function renderCal(){
   const y=calDate.getFullYear(),m=calDate.getMonth();
   $('calTitle').textContent=MONF[m]+' '+y;
@@ -676,7 +710,7 @@ function renderCal(){
 window.dayTap=function(ds){
   const list=bookings.filter(b=>active(b)&&ds>=b.date&&ds<=endOf(b));
   if(!list.length){openForm(ds);return}
-  $('detailBody').innerHTML=`<div class="grab"></div><h2 class="serif">${fmtDate(ds)}</h2><div class="sub">${list.length} booking${list.length>1?'s':''} this day</div>${list.map(cardHTML).join('')}<button class="btn ghost" onclick="openForm('${ds}')" style="margin-top:6px">＋ Book this date</button>`;
+  $('detailBody').innerHTML=`<div class="grab"></div><h2 class="serif" style="font-family:'Inter',sans-serif;font-weight:700">${fmtDate(ds)}</h2><div class="sub">${list.length} booking${list.length>1?'s':''} this day</div>${list.map(cardHTML).join('')}<button class="btn ghost" onclick="openForm('${ds}')" style="margin-top:6px">＋ Book this date</button>`;
   openSheet('detailSheet');
 }
 
@@ -714,7 +748,7 @@ async function makeInvoice(id){
   const JS=mod.jsPDF||mod.default;const doc=new JS({unit:'pt',format:'a4'});
   const W=doc.internal.pageSize.getWidth();const cx=W/2;
   const gold=[212,175,55],dark=[34,32,26],gray=[120,116,105],line=[225,221,206];
-  const e=endOf(b),bal=Math.max(0,(+b.total||0)-(+b.advance||0));
+  const e=endOf(b),bal=balanceOf(b);
   try{doc.addImage(LOGO,'JPEG',cx-46,26,92,92)}catch(e){}
   doc.setTextColor(gray[0],gray[1],gray[2]);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('BOOKING INVOICE',cx,134,{align:'center'});
   doc.setDrawColor(gold[0],gold[1],gold[2]);doc.setLineWidth(1.2);doc.line(60,148,W-60,148);
@@ -754,8 +788,8 @@ window.setStatus=function(id,st){const b=bookings.find(x=>x.id===id);if(!b)retur
 /* ---------- detail ---------- */
 window.showDetail=function(id){
   const b=bookings.find(x=>x.id===id);if(!b)return;
-  const bal=Math.max(0,(+b.total||0)-(+b.advance||0));const st=STATUS[b.status]||STATUS.confirmed;const e=endOf(b);
-  const wa=encodeURIComponent(`*THE LORD'S FARM HOUSE — Booking*\n\n📅 ${fmtDate(b.date)}${e!==b.date?' → '+fmtDate(e):''} (${slotLabel(b.slot)})\n👤 ${b.name}\n`+(b.phone?`📞 ${b.phone}\n`:'')+`🎉 ${b.event||'-'}\n`+(b.guests?`👥 ${b.guests} guests\n`:'')+`💰 Total: ${money(b.total)}\n📥 Advance: ${money(b.advance)}\n🧾 Balance: ${money(bal)}\n✅ ${st.l}`+(b.notes?`\n📝 ${b.notes}`:''));
+  const paid=paidOf(b),bal=balanceOf(b);const st=STATUS[b.status]||STATUS.confirmed;const e=endOf(b);
+  const wa=encodeURIComponent(`*THE LORD'S FARM HOUSE — Booking*\n\n📅 ${fmtDate(b.date)}${e!==b.date?' → '+fmtDate(e):''} (${slotLabel(b.slot)})\n👤 ${b.name}\n`+(b.phone?`📞 ${b.phone}\n`:'')+`🎉 ${b.event||'-'}\n`+(b.guests?`👥 ${b.guests} guests\n`:'')+`💰 Total: ${money(b.total)}\n📥 Paid: ${money(paid)}\n🧾 Balance: ${money(bal)}\n✅ ${st.l}`+(b.notes?`\n📝 ${b.notes}`:''));
   $('detailBody').innerHTML=`<div class="grab"></div><h2 class="serif">${esc(b.name)}</h2>
     <div class="sub">${slotBadge(b.slot)} ${fmtDate(b.date)}${e!==b.date?' → '+fmtDate(e):''}</div>
     <div class="drow"><span class="k">Event</span><span class="v">${esc(b.event||'-')}</span></div>
@@ -763,9 +797,9 @@ window.showDetail=function(id){
     ${b.guests?`<div class="drow"><span class="k">Guests</span><span class="v">${esc(b.guests)}</span></div>`:''}
     <div class="drow"><span class="k">Status</span><span class="v" style="color:${st.c}">${st.l}</span></div>
     <div class="drow"><span class="k">Total</span><span class="v">${money(b.total)}</span></div>
-    <div class="drow"><span class="k">Advance</span><span class="v">${money(b.advance)}</span></div>
+    <div class="drow"><span class="k">Paid</span><span class="v" style="color:var(--green)">${money(paid)}</span></div>
     <div class="drow"><span class="k">Balance</span><span class="v money">${money(bal)}</span></div>
-    ${b.pay&&b.pay!=='—'?`<div class="drow"><span class="k">Payment</span><span class="v">${esc(b.pay)}</span></div>`:''}
+    ${paymentsBlock(b)}
     ${b.notes?`<div class="drow" style="flex-direction:column;gap:6px"><span class="k">Notes</span><span class="v" style="text-align:left;font-weight:400">${esc(b.notes)}</span></div>`:''}
     <div class="drow"><span class="k">Booked by</span><span class="v" style="color:var(--gold)">${esc(b.bookedBy||'-')}</span></div>
     <div class="segs" style="margin-top:14px"><button class="${b.status==='confirmed'?'act':''}" onclick="setStatus('${b.id}','confirmed')">Confirm</button><button class="${b.status==='pending'?'act':''}" onclick="setStatus('${b.id}','pending')">Pending</button><button class="${b.status==='cancelled'?'act':''}" onclick="setStatus('${b.id}','cancelled')">Cancel</button></div>
@@ -775,6 +809,18 @@ window.showDetail=function(id){
     <button class="btn" onclick="openForm(null,'${b.id}')" style="margin-top:10px">Edit booking</button>`;
   openSheet('detailSheet');
 }
+function paymentsBlock(b){
+  const pays=[];
+  if(+b.advance>0)pays.push({amount:+b.advance,method:(b.pay&&b.pay!=='—')?b.pay:'',by:b.bookedBy,date:b.date,label:'Advance'});
+  (b.payments||[]).forEach(p=>pays.push(p));
+  const bal=balanceOf(b);
+  const rows=pays.length?pays.map(p=>`<div class="payrow"><div class="pa">${money(p.amount)}${p.method?` <span class="pm">${esc(p.method)}</span>`:''}</div><div class="pmeta">${esc(p.by||'-')} · ${fmtDate(p.date)}${p.label?' · '+p.label:''}${p.note?' · '+esc(p.note):''}</div></div>`).join(''):'<div class="pmeta" style="padding:6px 0">No payments yet.</div>';
+  return `<div class="paysec"><div class="paysec-h">Payment history</div>${rows}${bal>0?`<button class="btn ghost" onclick="openPayment('${b.id}')" style="margin-top:8px">＋ Add payment (${money(bal)} due)</button>`:'<div class="paidfull">✓ Fully paid</div>'}</div>`;
+}
+let payForId=null;
+window.openPayment=function(id){const b=bookings.find(x=>x.id===id);if(!b)return;payForId=id;$('payFor').textContent=b.name;$('payBal').textContent=money(balanceOf(b));$('payAmount').value='';$('payMethod').value='Cash';$('payNote').value='';closeSheet();setTimeout(()=>openSheet('paySheet'),260);};
+window.payFull=function(){const b=bookings.find(x=>x.id===payForId);if(!b)return;$('payAmount').value=balanceOf(b);};
+window.savePayment=function(){const b=bookings.find(x=>x.id===payForId);if(!b)return;const amt=+($('payAmount').value||0);if(amt<=0){toast('Enter an amount',true);return}const pmt={amount:amt,date:todayISO,by:currentUser,method:$('payMethod').value,note:$('payNote').value.trim()};const payments=(b.payments||[]).concat([pmt]);try{store.updateBooking(payForId,{payments:payments});b.payments=payments;toast('Payment recorded ✓');closeSheet();setTimeout(()=>showDetail(payForId),260);}catch(e){toast('Save fail',true)}};
 
 /* ---------- booking form ---------- */
 function openForm(date,id){
@@ -794,7 +840,7 @@ function openForm(date,id){
       $('fEvent').value='Wedding';$('fDate').value=date||todayISO;$('fStatus').value='confirmed';$('fPay').value='—';pickSlot('full');
       $('delBtn').classList.add('hidden');
     }
-    populateCustomers();openSheet('formSheet');
+    populateCustomers();syncDateDisp('fDate','fDateDisp');syncDateDisp('fEndDate','fEndDateDisp');openSheet('formSheet');
   },date||id?260:0);
 }
 window.openForm=openForm;
@@ -802,6 +848,7 @@ function customers(){const m=new Map();bookings.forEach(b=>{if(b.name){const k=b
 function populateCustomers(){const cs=customers();const nd=$('custNames'),pd=$('custPhones');if(nd)nd.innerHTML=cs.map(c=>`<option value="${esc(c.name)}">`).join('');if(pd)pd.innerHTML=cs.filter(c=>c.phone).map(c=>`<option value="${esc(c.phone)}">${esc(c.name)}</option>`).join('');}
 window.onCustName=function(){const v=$('fName').value.trim().toLowerCase();if(!v)return;const c=customers().find(x=>x.name.toLowerCase()===v);if(c&&c.phone&&!$('fPhone').value.trim())$('fPhone').value=c.phone;};
 window.onCustPhone=function(){const v=$('fPhone').value.trim();if(!v)return;const c=customers().find(x=>x.phone===v);if(c&&c.name&&!$('fName').value.trim())$('fName').value=c.name;};
+window.syncDateDisp=function(inp,disp){const el=$(disp);if(!el)return;const v=$(inp).value;if(v){const a=v.split('-');el.textContent=a[2]+'/'+a[1]+'/'+a[0];el.classList.remove('empty')}else{el.textContent='dd/mm/yyyy';el.classList.add('empty')}};
 function pickSlot(v){curSlot=v;document.querySelectorAll('#fSlot button').forEach(b=>b.classList.toggle('act',b.dataset.v===v))}
 window.pickSlot=pickSlot;
 function saveBooking(){
@@ -843,7 +890,7 @@ function openExpense(id){
   setTimeout(()=>{
     if(editingExp){const e=expenses.find(x=>x.id===editingExp);$('expTitle').textContent='Edit expense';$('eDate').value=e.date;$('eAmount').value=e.amount||'';$('eCat').value=e.category||'Maintenance';$('eNote').value=e.note||'';if(canDelete())$('eDelBtn').classList.remove('hidden');else $('eDelBtn').classList.add('hidden')}
     else{$('expTitle').textContent='Add expense';$('eDate').value=todayISO;$('eAmount').value='';$('eCat').value='Maintenance';$('eNote').value='';$('eDelBtn').classList.add('hidden')}
-    openSheet('expenseSheet');
+    syncDateDisp('eDate','eDateDisp');openSheet('expenseSheet');
   },id?260:0);
 }
 window.openExpense=openExpense;
@@ -865,7 +912,7 @@ function saveInfo(){const info={...farmInfo,contact:$('iContact').value.trim(),a
 window.saveInfo=saveInfo;
 async function exportData(){
   toast('Preparing backup...');
-  const bRows=bookings.map(b=>({Date:b.date,'End date':b.endDate||b.date,Slot:slotLabel(b.slot),Name:b.name,Phone:b.phone||'',Event:b.event||'',Guests:b.guests||'',Total:+b.total||0,Advance:+b.advance||0,Balance:Math.max(0,(+b.total||0)-(+b.advance||0)),Status:(STATUS[b.status]||STATUS.confirmed).l,'Payment':(b.pay&&b.pay!=='—')?b.pay:'','Booked by':b.bookedBy||'',Notes:b.notes||''}));
+  const bRows=bookings.map(b=>({Date:b.date,'End date':b.endDate||b.date,Slot:slotLabel(b.slot),Name:b.name,Phone:b.phone||'',Event:b.event||'',Guests:b.guests||'',Total:+b.total||0,Advance:+b.advance||0,Paid:paidOf(b),Balance:balanceOf(b),Status:(STATUS[b.status]||STATUS.confirmed).l,'Payment':(b.pay&&b.pay!=='—')?b.pay:'','Booked by':b.bookedBy||'',Notes:b.notes||''}));
   const eRows=expenses.map(e=>({Date:e.date,Category:e.category,Amount:+e.amount||0,Note:e.note||'','Added by':e.addedBy||''}));
   const stamp=iso(new Date());
   try{
@@ -1017,7 +1064,7 @@ function renderQuickView(){
   const el=$('quickView');if(!el)return;
   const mine=bookings.filter(b=>active(b)&&(b.bookedBy||'')===currentUser&&endOf(b)>=todayISO).sort((a,b)=>a.date<b.date?-1:1);
   const next=mine[0];
-  const bal=mine.reduce((s,b)=>s+Math.max(0,(+b.total||0)-(+b.advance||0)),0);
+  const bal=mine.reduce((s,b)=>s+balanceOf(b),0);
   el.innerHTML=`<div class="quickview"><div class="qh">Quick View \u00b7 ${esc(currentUser)}</div>
     <div class="qrow">
       <div class="qb"><div class="ql">My next booking</div><div class="qv" style="color:var(--gold)">${next?fmtDate(next.date):'\u2014'}</div><div class="qsub">${next?esc(next.name)+' \u00b7 '+slotLabel(next.slot):'None upcoming'}</div></div>
